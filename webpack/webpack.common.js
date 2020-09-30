@@ -49,7 +49,8 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       'process.env.IMGUR_CLIENT_ID': JSON.stringify(process.env.IMGUR_CLIENT_ID),
-      'process.env.BACKEND_URL': JSON.stringify(process.env.BACKEND_URL)
+      'process.env.BACKEND_URL': JSON.stringify(process.env.BACKEND_URL),
+      'process.env.LOCALES': JSON.stringify(process.env.LOCALES),
     }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '../src/index.html')
