@@ -3,20 +3,18 @@
 @import url("variables.css");
 @import url("form.css");
 
-body {
-  font-family: "Source Sans Pro", sans-serif;
-}
-
 * {
   box-sizing: border-box;
 }
 
 body {
+  font-family: "Source Sans Pro", sans-serif;
   margin: 0;
 }
 
 .button-primary,
 .button-primary-outline {
+  min-height: 38px;
   outline: none;
   font-weight: 600;
   font-size: 16px;
@@ -47,6 +45,17 @@ body {
   background-color: var(--white);
 }
 
+.button-primary-outline:hover,
+.button-primary-outline:focus,
+.button-primary-outline:active,
+.button-primary-outline.active {
+  border-color: var(--light-blue);
+}
+
+button.fit-content {
+  width: fit-content;
+}
+
 button.is-loading::before {
   content: "";
   display: grid;
@@ -62,14 +71,12 @@ button.is-loading::before {
 }
 
 .button-primary.is-loading::before {
-  background: url("/components/product-form/icon-loading-circle-white.svg") center
-    no-repeat;
+  background: url("/components/product-form/icon-loading-circle-white.svg") center no-repeat;
   background-size: cover;
 }
 
 .button-primary-outline.is-loading::before {
-  background: url("/components/product-form/icon-loading-circle-blue.svg") center
-    no-repeat;
+  background: url("/components/product-form/icon-loading-circle-blue.svg") center no-repeat;
   background-size: cover;
 }
 
@@ -84,27 +91,6 @@ button.is-loading {
 
 button.is-loading > span {
   display: none;
-}
-
-/* skeleton */
-
-.loading-line {
-  animation-duration: 1.5s;
-  animation-fill-mode: forwards;
-  animation-iteration-count: infinite;
-  animation-name: backgroundMovement;
-  animation-timing-function: linear;
-  background: var(--grey-skeleton);
-  background: linear-gradient(
-    267.58deg,
-    var(--grey-skeleton) 0%,
-    var(--grey-light) 80%,
-    var(--grey-skeleton) 100%
-  );
-  background-size: 200%;
-  border-radius: 2px;
-  display: block;
-  height: var(--loading-line-height);
 }
 
 @keyframes backgroundMovement {

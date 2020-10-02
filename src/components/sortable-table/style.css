@@ -1,3 +1,4 @@
+/* Sortable table styles */
 .sortable-table {
   background-color: var(--white);
   max-width: 100%;
@@ -22,7 +23,7 @@
   color: var(--table-black);
   display: flex;
   align-items: center;
-  border-top: 1px solid var(--grey-light);
+  border-top: 1px solid var(--grey-extra-light);
 }
 
 .sortable-table__cell:first-child {
@@ -40,6 +41,9 @@
 
 .sortable-table__header .sortable-table__cell[data-sortable] {
   cursor: pointer;
+}
+.sortable-table__header .sortable-table__cell[data-sortable]:hover {
+  color: var(--grey);
 }
 
 .sortable-table__cell-img {
@@ -124,10 +128,6 @@
   color: var(--dark-blue);
 }
 
-/*.sortable-table.sortable-table_loading .sortable-table__body {*/
-/*  display: none;*/
-/*}*/
-
 .sortable-table.sortable-table_loading .sortable-table__loading-line {
   display: grid;
 }
@@ -160,6 +160,15 @@
 }
 
 @keyframes backgroundMovement {
+  0% {
+    background-position: 100%;
+  }
+  100% {
+    background-position: -100%;
+  }
+}
+
+@-webkit-keyframes backgroundMovement {
   0% {
     background-position: 100%;
   }

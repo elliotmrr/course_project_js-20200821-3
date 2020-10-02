@@ -10,56 +10,6 @@ export default class Page {
   subElements = {};
   components = {};
 
-  async updateTableComponent(from, to) {
-    const data = await fetchJson(`${process.env.BACKEND_URL}api/dashboard/bestsellers?_start=1&_end=20&from=${from.toISOString()}&to=${to.toISOString()}`);
-    this.components.sortableTable.addRows(data);
-  }
-
-  async updateChartsComponents(from, to) {
-    this.components.ordersChart.update(from, to);
-    this.components.salesChart.update(from, to);
-    this.components.customersChart.update(from, to);
-  }
-
-  async initComponents() {
-    const from = new Date();
-    const to = new Date();
-    from.setMonth(from.getMonth() - 2);
-
-    const rangePicker = new RangePicker({from, to});
-
-    const ordersChart = new ColumnChart({
-      label: 'orders',
-      link: '#',
-      url: 'api/dashboard/orders',
-      range: {from, to},
-    });
-
-    const salesChart = new ColumnChart({
-      label: 'sales',
-      formatHeading: data => `$${data}`,
-      url: 'api/dashboard/sales',
-      range: {from, to},
-    });
-
-    const customersChart = new ColumnChart({
-      label: 'customers',
-      url: 'api/dashboard/customers',
-      range: {from, to},
-    });
-
-    const sortableTable = new SortableTable(header, {
-      url: `api/dashboard/bestsellers?_start=1&_end=20&from=${from.toISOString()}&to=${to.toISOString()}`,
-      isSortLocally: true
-    });
-
-    this.components.rangePicker = rangePicker;
-    this.components.ordersChart = ordersChart;
-    this.components.salesChart = salesChart;
-    this.components.customersChart = customersChart;
-    this.components.sortableTable = sortableTable;
-  }
-
   async render() {
     const element = document.createElement('div');
     element.innerHTML = this.template;
@@ -67,12 +17,45 @@ export default class Page {
 
     this.subElements = this.getSubElements(this.element);
 
-    await this.initComponents();
-
+    this.initComponents();
     this.renderComponents();
     this.initEventListeners();
 
     return this.element;
+  }
+
+  initComponents() {
+    const from = new Date();
+    const to = new Date();
+    from.setMonth(from.getMonth() - 2);
+
+    this.components.rangePicker = new RangePicker({from, to});
+
+    this.components.ordersChart = new ColumnChart({
+      label: 'orders',
+      link: '#',
+      url: 'api/dashboard/orders',
+      range: {from, to},
+    });
+
+    this.components.salesChart = new ColumnChart({
+      label: 'sales',
+      formatHeading: data => `$${data}`,
+      url: 'api/dashboard/sales',
+      range: {from, to},
+    });
+
+    this.components.customersChart = new ColumnChart({
+      label: 'customers',
+      url: 'api/dashboard/customers',
+      range: {from, to},
+    });
+
+    this.components.productsContainer = new SortableTable(header, {
+      url: `api/dashboard/bestsellers`,
+      isSortLocally: true,
+      range: {from, to},
+    });
   }
 
   renderComponents() {
@@ -84,22 +67,28 @@ export default class Page {
     });
   }
 
-  getSubElements($element) {
-    const elements = $element.querySelectorAll('[data-element]');
+  initEventListeners() {
+    this.components.rangePicker.element.addEventListener('date-select', event => {
+      const { from, to } = event.detail;
+      this.updateComponents(from, to);
+    });
+  }
+
+  async updateComponents(from, to) {
+    this.components.ordersChart.update(from, to);
+    this.components.salesChart.update(from, to);
+    this.components.customersChart.update(from, to);
+    this.components.productsContainer.update(from, to);
+  }
+
+  getSubElements(element) {
+    const elements = element.querySelectorAll('[data-element]');
 
     return [...elements].reduce((accum, subElement) => {
       accum[subElement.dataset.element] = subElement;
 
       return accum;
     }, {});
-  }
-
-  initEventListeners() {
-    this.components.rangePicker.element.addEventListener('date-select', event => {
-      const { from, to } = event.detail;
-      this.updateChartsComponents(from, to);
-      this.updateTableComponent(from, to);
-    });
   }
 
   destroy() {
@@ -124,7 +113,7 @@ export default class Page {
 
       <h3 class="block-title">Best sellers</h3>
 
-      <div data-element="sortableTable">
+      <div data-element="productsContainer">
         <!-- sortable-table component -->
       </div>
     </div>`;
