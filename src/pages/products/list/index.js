@@ -1,4 +1,4 @@
-import ProductForm from "../../../components/product-form";
+import DoubleSlider from '../../../components/double-slider';
 import SortableTable from '../../../components/sortable-table';
 import header from '../../dashboard/bestsellers-header';
 
@@ -16,11 +16,14 @@ export default class Page {
 
     this.initComponents();
     this.renderComponents();
+    this.initEventListeners();
 
     return this.element;
   }
 
   initComponents() {
+    this.components.sliderContainer = new DoubleSlider();
+
     this.components.productsContainer = new SortableTable(header, {
       url: `api/rest/products`,
     });
@@ -33,6 +36,17 @@ export default class Page {
 
       root.append(element);
     });
+  }
+
+  initEventListeners() {
+    this.components.sliderContainer.element.addEventListener('range-select', event => {
+      const { from, to } = event.detail;
+      this.updateComponents(from, to);
+    });
+  }
+
+  async updateComponents(from, to) {
+    this.components.productsContainer.update(from, to);
   }
 
   getSubElements(element) {
@@ -67,15 +81,6 @@ export default class Page {
             <div class="form-group" data-element="sliderContainer">
               <label class="form-label">Цена:</label>
               <!-- double-slider component -->
-              <div class="range-slider">
-                <span data-element="from">$0</span>
-                <div data-element="inner" class="range-slider__inner">
-                  <span data-element="progress" class="range-slider__progress" style="left: 0%; right: 0%;"></span>
-                  <span data-element="thumbLeft" class="range-slider__thumb-left" style="left: 0%;"></span>
-                  <span data-element="thumbRight" class="range-slider__thumb-right" style="right: 0%;"></span>
-                </div>
-                <span data-element="to">$4000</span>
-              </div>
             </div>
             <div class="form-group">
               <label class="form-label">Статус:</label>
