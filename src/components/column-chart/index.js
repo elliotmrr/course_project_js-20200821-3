@@ -18,11 +18,10 @@ export default class ColumnChart {
     this.label = label;
     this.link = link;
     this.formatHeading = formatHeading;
-    this.url = new URL(url, process.env.BACKEND_URL);
+    this.url = url;
     this.range = range;
 
     this.render();
-    this.update(this.range.from, this.range.to);
   }
 
   render() {
@@ -31,37 +30,38 @@ export default class ColumnChart {
     this.element = element.firstElementChild;
 
     this.subElements = this.getSubElements(this.element);
+
+    this.update(this.range);
   }
 
-  async update(from, to) {
+  async update({ from, to }) {
+    const { header, body } = this.subElements;
+
+    this.range = { from, to };
+
     this.element.classList.add('column-chart_loading');
-    this.subElements.header.textContent = '';
-    this.subElements.body.innerHTML = '';
+    header.textContent = '';
+    body.innerHTML = '';
 
-    this.setNewRange(from, to);
-
-    const data = await this.loadData(from, to);
+    const data = await this.loadData({ from, to });
 
     if (data && Object.values(data).length) {
-      this.subElements.header.textContent = this.getHeaderValue(data);
-      this.subElements.body.innerHTML = this.getColumnBody(data);
+      header.textContent = this.getHeaderValue(data);
+      body.innerHTML = this.getColumnBody(data);
 
       this.element.classList.remove('column-chart_loading');
     }
 
-    return data;
+    return this.element;
   }
 
-  setNewRange(from, to) {
-    this.range.from = from;
-    this.range.to = to;
-  }
+  loadData({ from, to }) {
+    const url = new URL(this.url, process.env.BACKEND_URL);
 
-  async loadData(from, to) {
-    this.url.searchParams.set('from', from.toISOString());
-    this.url.searchParams.set('to', to.toISOString());
+    url.searchParams.set('from', from.toISOString());
+    url.searchParams.set('to', to.toISOString());
 
-    return await fetchJson(this.url);
+    return fetchJson(url);
   }
 
   getLink() {
@@ -80,7 +80,11 @@ export default class ColumnChart {
       const percent = (value / maxValue * 100).toFixed(0);
       const tooltip = `
         <span>
-          <small>${new Date(key).toLocaleString(JSON.parse(process.env.LOCALES), {dateStyle: 'medium'})}</small>
+          <small>
+            ${new Date(key).toLocaleString(JSON.parse(process.env.LOCALES), {
+              dateStyle: 'medium',
+            })}
+          </small>
           <br />
           <strong>${percent}%</strong>
         </span>
