@@ -1,5 +1,7 @@
 import fetchJson from './../../utils/fetch-json.js';
 
+const LOCALES = JSON.parse(process.env.LOCALES);
+
 export default class ColumnChart {
   element; // HTMLElement;
   subElements = {};
@@ -10,7 +12,7 @@ export default class ColumnChart {
     link = '',
     formatHeading = data => data,
     url = '',
-    range = {
+    dateRange = {
       from: new Date(),
       to: new Date(),
     }
@@ -19,9 +21,10 @@ export default class ColumnChart {
     this.link = link;
     this.formatHeading = formatHeading;
     this.url = url;
-    this.range = range;
+    this.dateRange = dateRange;
 
     this.render();
+    this.update(dateRange);
   }
 
   render() {
@@ -30,14 +33,12 @@ export default class ColumnChart {
     this.element = element.firstElementChild;
 
     this.subElements = this.getSubElements(this.element);
-
-    this.update(this.range);
   }
 
   async update({ from, to }) {
     const { header, body } = this.subElements;
 
-    this.range = { from, to };
+    this.dateRange = { from, to };
 
     this.element.classList.add('column-chart_loading');
     header.textContent = '';
@@ -81,7 +82,7 @@ export default class ColumnChart {
       const tooltip = `
         <span>
           <small>
-            ${new Date(key).toLocaleString(JSON.parse(process.env.LOCALES), {
+            ${new Date(key).toLocaleString(LOCALES, {
               dateStyle: 'medium',
             })}
           </small>
