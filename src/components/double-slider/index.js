@@ -55,10 +55,7 @@ export default class DoubleSlider {
     document.removeEventListener('pointermove', this.onThumbPointerMove);
     document.removeEventListener('pointerup', this.onThumbPointerUp);
 
-    this.element.dispatchEvent(new CustomEvent('range-select', {
-      detail: this.selected,
-      bubbles: true
-    }));
+    this.dispatchEvent();
   };
 
   constructor({
@@ -161,6 +158,13 @@ export default class DoubleSlider {
 
     document.addEventListener('pointermove', this.onThumbPointerMove);
     document.addEventListener('pointerup', this.onThumbPointerUp);
+  }
+
+  dispatchEvent() {
+    this.element.dispatchEvent(new CustomEvent('range-select', {
+      detail: this.selected,
+      bubbles: true
+    }));
   }
 
   deinEventListeners() {
