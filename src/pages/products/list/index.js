@@ -7,7 +7,7 @@ export default class Page {
   subElements = {};
   components = {};
 
-  async render() {
+  render() {
     const element = document.createElement('div');
     element.innerHTML = this.template;
     this.element = element.firstElementChild;
@@ -39,14 +39,30 @@ export default class Page {
   }
 
   initEventListeners() {
-    this.components.sliderContainer.element.addEventListener('range-select', event => {
-      const { from, to } = event.detail;
-      this.updateComponents(from, to);
+    const { sliderContainer } = this.components;
+    const { filterName, filterStatus } = this.subElements;
+
+    sliderContainer.element.addEventListener('range-select', event => {
+      const priceRange = Object.assign(event.detail);
+
+      this.updateComponents({ priceRange });
+    });
+
+    filterName.addEventListener('input', event => {
+      const searchTitle = event.target.value;
+
+      this.updateComponents({ searchTitle });
+    });
+
+    filterStatus.addEventListener('input', event => {
+      const searchStatus = event.target.value;
+
+      this.updateComponents({ searchStatus });
     });
   }
 
-  async updateComponents(from, to) {
-    this.components.productsContainer.update(from, to);
+  async updateComponents({ dateRange, priceRange, searchTitle, searchStatus}) {
+    this.components.productsContainer.update({ dateRange, priceRange, searchTitle, searchStatus});
   }
 
   getSubElements(element) {
@@ -59,10 +75,16 @@ export default class Page {
     }, {});
   }
 
+  remove() {
+    this.element.remove();
+  }
+
   destroy() {
     for (const component of Object.values(this.components)) {
       component.destroy();
     }
+
+    this.remove();
   }
 
   get template() {
@@ -73,7 +95,7 @@ export default class Page {
           <a href="/products/add" class="button-primary">Добавить товар</a>
         </div>
         <div class="content-box content-box_small">
-          <form class="form-inline">
+          <form class="form-inline" onsubmit="return false;">
             <div class="form-group">
               <label class="form-label">Сортировать по:</label>
               <input type="text" data-element="filterName" class="form-control" placeholder="Название товара">
