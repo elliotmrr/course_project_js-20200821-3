@@ -1,5 +1,5 @@
 import fetchJson from './../../utils/fetch-json.js';
-import escapeHtml from './../../utils/escape-html';
+import escapeHtml from './../../utils/escape-html.js';
 
 const LOCALES = JSON.parse(process.env.LOCALES);
 
@@ -8,20 +8,20 @@ export default class SortableTable {
   subElements = {};
   data = [];
   loading = false;
+  debounceTime = 1000 * 60;
 
-  // TODO: fix a bug: infinite scroll and increase range of load data
   onWindowScroll = async () => {
     const { bottom } = this.element.getBoundingClientRect();
 
     if (bottom < document.documentElement.clientHeight + 100 && !this.loading && !this.isSortLocally) {
-      this.start = this.end;
-
       this.loading = true;
 
       const data = await this.loadData();
       this.addTableBodyRows(data);
 
-      this.loading = false;
+      if (data.length) {
+        this.loading = false;
+      }
     }
   };
 
@@ -139,6 +139,16 @@ export default class SortableTable {
     const data = await fetchJson(url);
 
     this.element.classList.remove('sortable-table_loading');
+
+    if (data.length < this.step) {
+      this.start += data.length;
+
+      this.loading = true;
+      setTimeout(() => this.loading = false, this.debounceTime);
+    } else {
+      this.start = this.end;
+      this.loading = false;
+    }
 
     return data;
   }
