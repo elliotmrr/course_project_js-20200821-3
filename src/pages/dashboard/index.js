@@ -10,7 +10,7 @@ export default class Page {
   subElements = {};
   components = {};
 
-  async render() {
+  render() {
     const element = document.createElement('div');
     element.innerHTML = this.template;
     this.element = element.firstElementChild;
@@ -25,36 +25,38 @@ export default class Page {
   }
 
   initComponents() {
-    const from = new Date();
-    const to = new Date();
-    from.setMonth(from.getMonth() - 2);
+    const dateRange = {
+      from: new Date(),
+      to: new Date()
+    };
+    dateRange.from.setMonth(dateRange.from.getMonth() - 1);
 
-    this.components.rangePicker = new RangePicker({from, to});
+    this.components.rangePicker = new RangePicker(dateRange);
 
     this.components.ordersChart = new ColumnChart({
       label: 'orders',
-      link: '#',
+      link: '/sales',
       url: 'api/dashboard/orders',
-      range: {from, to},
+      dateRange,
     });
 
     this.components.salesChart = new ColumnChart({
       label: 'sales',
       formatHeading: data => `$${data}`,
       url: 'api/dashboard/sales',
-      range: {from, to},
+      dateRange,
     });
 
     this.components.customersChart = new ColumnChart({
       label: 'customers',
       url: 'api/dashboard/customers',
-      range: {from, to},
+      dateRange,
     });
 
     this.components.productsContainer = new SortableTable(header, {
       url: `api/dashboard/bestsellers`,
       isSortLocally: true,
-      range: {from, to},
+      dateRange,
     });
   }
 
@@ -69,16 +71,17 @@ export default class Page {
 
   initEventListeners() {
     this.components.rangePicker.element.addEventListener('date-select', event => {
-      const { from, to } = event.detail;
-      this.updateComponents(from, to);
+      const dateRange = Object.assign(event.detail);
+
+      this.updateComponents(dateRange);
     });
   }
 
-  async updateComponents(from, to) {
-    this.components.ordersChart.update(from, to);
-    this.components.salesChart.update(from, to);
-    this.components.customersChart.update(from, to);
-    this.components.productsContainer.update(from, to);
+  updateComponents(dateRange) {
+    this.components.ordersChart.update(dateRange);
+    this.components.salesChart.update(dateRange);
+    this.components.customersChart.update(dateRange);
+    this.components.productsContainer.update({ dateRange });
   }
 
   getSubElements(element) {
@@ -91,31 +94,39 @@ export default class Page {
     }, {});
   }
 
+  remove() {
+    this.element.remove();
+  }
+
   destroy() {
     for (const component of Object.values(this.components)) {
       component.destroy();
     }
+
+    this.remove();
   }
 
   get template() {
-    return `<div class="dashboard">
-      <div class="content__top-panel">
-        <h1 class="page-title">Dashboard</h1>
-        <!-- RangePicker component -->
-        <div data-element="rangePicker"></div>
-      </div>
-      <div data-element="chartsRoot" class="dashboard__charts">
-        <!-- column-chart components -->
-        <div data-element="ordersChart" class="dashboard__chart_orders"></div>
-        <div data-element="salesChart" class="dashboard__chart_sales"></div>
-        <div data-element="customersChart" class="dashboard__chart_customers"></div>
-      </div>
+    return `
+      <div class="dashboard">
+        <div class="content__top-panel">
+          <h1 class="page-title">Dashboard</h1>
+          <!-- RangePicker component -->
+          <div data-element="rangePicker"></div>
+        </div>
+        <div data-element="chartsRoot" class="dashboard__charts">
+          <!-- column-chart components -->
+          <div data-element="ordersChart" class="dashboard__chart_orders"></div>
+          <div data-element="salesChart" class="dashboard__chart_sales"></div>
+          <div data-element="customersChart" class="dashboard__chart_customers"></div>
+        </div>
 
-      <h3 class="block-title">Best sellers</h3>
+        <h3 class="block-title">Best sellers</h3>
 
-      <div data-element="productsContainer">
-        <!-- sortable-table component -->
+        <div data-element="productsContainer">
+          <!-- sortable-table component -->
+        </div>
       </div>
-    </div>`;
+    `;
   }
 }
