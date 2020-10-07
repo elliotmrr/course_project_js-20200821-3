@@ -109,6 +109,19 @@ export default class DoubleSlider {
     }
   }
 
+  update({
+    from = this.min,
+    to = this.max
+  } = {}) {
+    this.selected = { from, to };
+    this.subElements.from.innerHTML = this.formatValue(from);
+    this.subElements.to.innerHTML = this.formatValue(to);
+
+    this.initSelectedRange();
+
+    return this.selected;
+  }
+
   initSelectedRange() {
     const { progress, thumbLeft, thumbRight } = this.subElements;
     const rangeTotal = this.max - this.min;
