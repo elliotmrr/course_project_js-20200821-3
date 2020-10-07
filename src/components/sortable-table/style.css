@@ -88,6 +88,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  margin-bottom: 0;
 }
 
 .sortable-table__empty-placeholder p {
@@ -109,6 +110,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
   color: var(--grey);
 }
 
@@ -157,6 +159,10 @@
   background-size: 200%;
   border-radius: 2px;
   height: var(--loading-line-height);
+}
+
+[data-element="productsContainer"] {
+  height: 100%;
 }
 
 @keyframes backgroundMovement {

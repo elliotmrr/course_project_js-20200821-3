@@ -108,7 +108,7 @@ export default class Page {
 
   get template() {
     return `
-      <div class="dashboard">
+      <div class="dashboard full-height flex-column">
         <div class="content__top-panel">
           <h1 class="page-title">Dashboard</h1>
           <!-- RangePicker component -->

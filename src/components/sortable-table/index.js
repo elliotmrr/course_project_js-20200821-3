@@ -308,6 +308,15 @@ export default class SortableTable {
   }
 
   get template() {
+    const emptyPlaceHolder = (this.dateRange.from || this.dateRange.to)
+      ? `<div>Нет данных</div>`
+      : `
+        <div>
+          <p>Не найдено товаров удовлетворяющих выбранному критерию</p>
+          <button type="button" class="button-primary-outline">Очистить фильтры</button>
+        </div>
+      `;
+
     return `
       <div class="sortable-table sortable-table_loading">
         ${this.tableHeader}
@@ -316,7 +325,7 @@ export default class SortableTable {
         <div data-element="loading" class="loading-line sortable-table__loading-line"></div>
 
         <div data-element="emptyPlaceholder" class="sortable-table__empty-placeholder">
-          <div>Нет данных</div>
+          ${emptyPlaceHolder}
         </div>
       </div>
     `;
