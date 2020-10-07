@@ -7,6 +7,10 @@ export default class Page {
   subElements = {};
   components = {};
 
+  resetFilters = event => {
+    alert(1);
+  };
+
   render() {
     const element = document.createElement('div');
     element.innerHTML = this.template;
@@ -59,6 +63,8 @@ export default class Page {
 
       this.updateComponents({ searchStatus });
     });
+
+    this.components.productsContainer.element.addEventListener('reset-filters', this.resetFilters);
   }
 
   async updateComponents({ dateRange, priceRange, searchTitle, searchStatus}) {

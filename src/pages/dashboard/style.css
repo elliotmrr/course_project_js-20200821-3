@@ -20,3 +20,7 @@
 .dashboard .sortable-table {
   --cols: 6;
 }
+
+.dashboard .sortable-table__empty-data {
+  display: block;
+}

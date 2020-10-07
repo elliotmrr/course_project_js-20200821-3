@@ -41,3 +41,7 @@
   justify-content: center;
   color: var(--grey);
 }
+
+.products-list .sortable-table__empty-data-filter {
+  display: block;
+}
