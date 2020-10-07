@@ -191,11 +191,15 @@ export default class SortableTable {
     } else {
       await this.sortOnServer();
     }
+
+    return this.data;
   }
 
   sortLocally() {
     this.sortData();
     this.renderTableBodyRows();
+
+    return this.data;
   }
 
   async sortOnServer() {
@@ -208,6 +212,8 @@ export default class SortableTable {
     this.data = await this.loadData();
 
     this.renderTableBodyRows();
+
+    return this.data;
   }
 
   renderTableBodyRows() {

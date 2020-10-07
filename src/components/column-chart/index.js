@@ -53,7 +53,7 @@ export default class ColumnChart {
       this.element.classList.remove('column-chart_loading');
     }
 
-    return this.element;
+    return data;
   }
 
   loadData({ from, to }) {
