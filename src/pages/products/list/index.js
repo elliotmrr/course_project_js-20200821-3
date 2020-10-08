@@ -8,7 +8,13 @@ export default class Page {
   components = {};
 
   resetFilters = event => {
-    alert(1);
+    const { filterName, filterStatus } = this.subElements;
+
+    const searchTitle = filterName.value = '';
+    const searchStatus = filterStatus.value = '';
+    const priceRange = this.components.sliderContainer.update();
+
+    this.updateComponents({ priceRange, searchTitle, searchStatus});
   };
 
   render() {
@@ -58,7 +64,7 @@ export default class Page {
       this.updateComponents({ searchTitle });
     });
 
-    filterStatus.addEventListener('input', event => {
+    filterStatus.addEventListener('change', event => {
       const searchStatus = event.target.value;
 
       this.updateComponents({ searchStatus });
